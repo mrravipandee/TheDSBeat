@@ -1,12 +1,15 @@
-import React from 'react'
+// pages/dashboard.tsx
 
-const page = () => {
+import Sidebar from "@/components/SideNavbar";
+
+export default function Dashboard() {
   return (
-    <div>
-      <h1>Welcome to Ds Beat</h1>
-      <p>Keep the Code Flowing</p>
+    <div className="flex">
+      <Sidebar />
+      <div className="flex-1 p-8">
+        {/* Your main dashboard content goes here */}
+        <h1 className="text-3xl font-bold">Dashboard Content</h1>
+      </div>
     </div>
-  )
+  );
 }
-
-export default page
