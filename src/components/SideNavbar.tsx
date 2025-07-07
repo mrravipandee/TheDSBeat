@@ -4,6 +4,9 @@
 import Image from "next/image";
 import { FaHome, FaChartLine, FaQuestionCircle, FaClipboardList, FaSignOutAlt, FaUser, FaTimes } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import React from "react";
 
 export default function Sidebar() {
     const [activeItem, setActiveItem] = useState("Home");
@@ -16,10 +19,10 @@ export default function Sidebar() {
         if (typeof window !== 'undefined') {
             const savedName = localStorage.getItem('userName') || "Guest";
             const savedGender = localStorage.getItem('userGender') as "male" | "female" | "other" | null;
-            
+
             setUserName(savedName);
             setUserGender(savedGender);
-            
+
             // Show modal if no name is set
             if (!localStorage.getItem('userName')) {
                 setShowProfileModal(true);
@@ -42,16 +45,16 @@ export default function Sidebar() {
     };
 
     // Function to handle logout
-    const handleLogout = () => {
-        // Clear user data from local storage
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userGender');
-        // Redirect to login or perform other logout actions
-    };
+    // const handleLogout = () => {
+    //     // Clear user data from local storage
+    //     localStorage.removeItem('userName');
+    //     localStorage.removeItem('userGender');
+    //     // Redirect to login or perform other logout actions
+    // };
 
     // Get appropriate avatar based on gender
     const getAvatar = () => {
-        switch(userGender) {
+        switch (userGender) {
             case "male":
                 return "https://static.vecteezy.com/system/resources/previews/004/607/791/non_2x/man-face-emotive-icon-smiling-male-character-in-blue-shirt-flat-illustration-isolated-on-white-happy-human-psychological-portrait-positive-emotions-user-avatar-for-app-web-design-vector.jpg";
             case "female":
@@ -62,6 +65,16 @@ export default function Sidebar() {
                 return <FaUser className="w-15 h-15 text-purple-500" />;
         }
     };
+
+
+    const menuItems = [
+        { name: 'Home', icon: FaHome, path: '/' },
+        { name: 'Progress', icon: FaChartLine, path: '/progress' },
+        { name: 'Question', icon: FaQuestionCircle, path: '/question' },
+        { name: 'Test', icon: FaClipboardList, path: '/test' }
+    ]
+
+    const pathname = usePathname();
 
     return (
         <>
@@ -91,7 +104,7 @@ export default function Sidebar() {
                         </div>
                         <p className="mt-4 text-sm text-gray-600">Welcome back,</p>
                         <p className="text-lg font-semibold text-purple-700 truncate max-w-full px-2">{userName}</p>
-                        <button 
+                        <button
                             onClick={() => setShowProfileModal(true)}
                             className="mt-2 text-sm text-purple-600 hover:text-purple-800 underline"
                         >
@@ -101,45 +114,34 @@ export default function Sidebar() {
 
                     {/* Menu */}
                     <nav className="mt-6 space-y-1 px-4">
-                        <SidebarItem 
-                            icon={<FaHome />} 
-                            label="Home" 
-                            active={activeItem === "Home"} 
-                            onClick={() => handleItemClick("Home")}
-                        />
-                        <SidebarItem 
-                            icon={<FaChartLine />} 
-                            label="Progress" 
-                            active={activeItem === "Progress"} 
-                            onClick={() => handleItemClick("Progress")}
-                        />
-                        <SidebarItem 
-                            icon={<FaQuestionCircle />} 
-                            label="Question" 
-                            active={activeItem === "Question"} 
-                            onClick={() => handleItemClick("Question")}
-                        />
-                        <SidebarItem 
-                            icon={<FaClipboardList />} 
-                            label="Test" 
-                            active={activeItem === "Test"} 
-                            onClick={() => handleItemClick("Test")}
-                        />
+                        {menuItems.map((item, index) => (
+                            <Link key={index} href={item.path}>
+                                <div
+                                    className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition ${pathname === item.path
+                                            ? "bg-purple-300 text-white"
+                                            : "text-gray-700 hover:bg-purple-200"
+                                        }`}
+                                >
+                                    <span className="text-xl">{React.createElement(item.icon)}</span>
+                                    <span className="text-md">{item.name}</span>
+                                </div>
+                            </Link>
+                        ))}
                     </nav>
                 </div>
 
                 {/* Bottom Section */}
                 <div className="p-4">
                     <div className="text-sm italic text-center text-purple-600 mb-4 px-2">
-                        "Success is the sum of small efforts, repeated day in and day out."
+                        Success is the sum of small efforts, repeated day in and day out.
                     </div>
-                    <button 
+                    {/* <button 
                         onClick={handleLogout}
                         className="flex items-center justify-center gap-2 w-full p-2 rounded-lg text-gray-700 hover:bg-purple-200 transition-colors"
                     >
                         <FaSignOutAlt className="text-purple-700" />
                         <span>Logout</span>
-                    </button>
+                    </button> */}
                 </div>
             </div>
 
@@ -151,15 +153,15 @@ export default function Sidebar() {
                             <h2 className="text-xl font-bold text-purple-800">
                                 {userName === "Guest" ? "Complete Your Profile" : "Edit Profile"}
                             </h2>
-                            <button 
+                            <button
                                 onClick={() => setShowProfileModal(false)}
                                 className="text-gray-500 hover:text-gray-700"
                             >
                                 <FaTimes />
                             </button>
                         </div>
-                        
-                        <ProfileForm 
+
+                        <ProfileForm
                             initialName={userName}
                             initialGender={userGender}
                             onSave={handleSaveProfile}
@@ -181,7 +183,7 @@ type SidebarItemProps = {
 
 function SidebarItem({ icon, label, active = false, onClick }: SidebarItemProps) {
     return (
-        <div 
+        <div
             className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors
                 ${active ? 'bg-purple-600 text-white' : 'text-gray-700 hover:bg-purple-200'}`}
             onClick={onClick}
@@ -228,7 +230,7 @@ function ProfileForm({ initialName, initialGender, onSave, onCancel }: ProfileFo
                     required
                 />
             </div>
-            
+
             <div className="mb-6">
                 <label className="block text-gray-700 mb-2">
                     Gender
@@ -236,40 +238,37 @@ function ProfileForm({ initialName, initialGender, onSave, onCancel }: ProfileFo
                 <div className="flex gap-4">
                     <button
                         type="button"
-                        className={`flex-1 py-2 px-4 rounded border ${
-                            gender === "male" 
-                                ? 'bg-purple-100 border-purple-500 text-purple-700' 
-                                : 'border-gray-300 hover:bg-gray-50'
-                        }`}
+                        className={`flex-1 py-2 px-4 rounded border ${gender === "male"
+                            ? 'bg-purple-100 border-purple-500 text-purple-700'
+                            : 'border-gray-300 hover:bg-gray-50'
+                            }`}
                         onClick={() => setGender("male")}
                     >
                         Male
                     </button>
                     <button
                         type="button"
-                        className={`flex-1 py-2 px-4 rounded border ${
-                            gender === "female" 
-                                ? 'bg-purple-100 border-purple-500 text-purple-700' 
-                                : 'border-gray-300 hover:bg-gray-50'
-                        }`}
+                        className={`flex-1 py-2 px-4 rounded border ${gender === "female"
+                            ? 'bg-purple-100 border-purple-500 text-purple-700'
+                            : 'border-gray-300 hover:bg-gray-50'
+                            }`}
                         onClick={() => setGender("female")}
                     >
                         Female
                     </button>
                     <button
                         type="button"
-                        className={`flex-1 py-2 px-4 rounded border ${
-                            gender === "other" 
-                                ? 'bg-purple-100 border-purple-500 text-purple-700' 
-                                : 'border-gray-300 hover:bg-gray-50'
-                        }`}
+                        className={`flex-1 py-2 px-4 rounded border ${gender === "other"
+                            ? 'bg-purple-100 border-purple-500 text-purple-700'
+                            : 'border-gray-300 hover:bg-gray-50'
+                            }`}
                         onClick={() => setGender("other")}
                     >
                         Other
                     </button>
                 </div>
             </div>
-            
+
             <div className="flex gap-3">
                 <button
                     type="button"
