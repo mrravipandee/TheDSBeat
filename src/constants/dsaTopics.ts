@@ -1,0 +1,16 @@
+export const DSA_TOPICS = [
+    "Basics of Programming",
+    "Patterns",
+    "Bit Manipulation",
+    "Arrays",
+    "Strings",
+    "Linked List",
+    "Stacks",
+    "Queues",
+    "Trees",
+    "Graphs",
+    "Dynamic Programming",
+    "Greedy",
+    "Backtracking",
+    "Recursion",
+];
